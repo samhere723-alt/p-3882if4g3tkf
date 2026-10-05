@@ -1,0 +1,1178 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex,notranslate">
+<meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="bingbot" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#10151B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="帳本">
+<link rel="icon" href="data:,">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>帳本</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700;800&family=Barlow+Semi+Condensed:wght@600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* Layout：手機優先單欄 760px。墨色總覽塊（唯一重色）→ 一梯一張卡、大號序號＝施工順序 → 一列一件事，點了從下面拉出編輯面板 */
+:root{
+  --paper:#F2F0E7; --paper-2:#E8E5D8; --card:#FBFAF5;
+  --ink:#10151B; --ink-2:#3B414B; --muted:#5B6170;
+  --line:rgba(16,21,27,.11); --line-2:rgba(16,21,27,.24);
+  --blue:#344BFF; --blue-deep:#2236E0; --blue-wash:#E3E6FF; --on-blue:#F2F0E7;
+  --mint:#D7F2BA; --on-mint:#10151B;
+  --bad:#C8321F; --bad-wash:#FBE2DC;
+  --hero:#10151B; --on-hero:#F2F0E7; --on-hero-2:#A7ADB8; --hero-line:rgba(242,240,231,.14); --hero-band:rgba(242,240,231,.12); --hero-btn:rgba(242,240,231,.08);
+  --c-work:#344BFF; --c-furn:#eb6834; --c-elec:#1baf7a;
+  --range-1:#C9C6B8; --range-2:#E3E0D3;
+  --scrim:rgba(16,21,27,.42);
+  --shadow:0 18px 50px rgba(16,21,27,.18);
+  --f-ui:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-num:"Barlow","Bahnschrift","DIN Alternate","Arial Narrow",sans-serif;
+  --f-label:"Barlow Semi Condensed","Bahnschrift","DIN Condensed","Arial Narrow",sans-serif;
+  --ease:cubic-bezier(.2,0,0,1); --spring:cubic-bezier(.175,.885,.32,1.275);
+  --gutter:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D1116; --paper-2:#1A2029; --card:#141920;
+    --ink:#F2F0E7; --ink-2:#CDD0D6; --muted:#9CA2AE;
+    --line:rgba(242,240,231,.10); --line-2:rgba(242,240,231,.24);
+    --blue:#7383FF; --blue-deep:#5D6EFF; --blue-wash:#1E2550; --on-blue:#0D1116;
+    --bad:#FF7A66; --bad-wash:#3A1D18;
+    --hero:#1B2230; --on-hero:#F2F0E7; --on-hero-2:#A7ADB8; --hero-line:rgba(242,240,231,.14); --hero-band:rgba(242,240,231,.12); --hero-btn:rgba(242,240,231,.08);
+    --c-work:#7383FF; --c-furn:#d95926; --c-elec:#199e70;
+    --range-1:#3E4552; --range-2:#262C36;
+    --scrim:rgba(0,0,0,.55);
+    --shadow:0 18px 50px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0D1116; --paper-2:#1A2029; --card:#141920;
+  --ink:#F2F0E7; --ink-2:#CDD0D6; --muted:#9CA2AE;
+  --line:rgba(242,240,231,.10); --line-2:rgba(242,240,231,.24);
+  --blue:#7383FF; --blue-deep:#5D6EFF; --blue-wash:#1E2550; --on-blue:#0D1116;
+  --bad:#FF7A66; --bad-wash:#3A1D18;
+  --hero:#1B2230; --on-hero:#F2F0E7; --on-hero-2:#A7ADB8; --hero-line:rgba(242,240,231,.14); --hero-band:rgba(242,240,231,.12); --hero-btn:rgba(242,240,231,.08);
+  --c-work:#7383FF; --c-furn:#d95926; --c-elec:#199e70;
+  --range-1:#3E4552; --range-2:#262C36;
+  --scrim:rgba(0,0,0,.55);
+  --shadow:0 18px 50px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--f-ui);letter-spacing:.01em;-webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+.page{max-width:760px;margin:0 auto;padding-inline:var(--gutter);padding-block:14px 96px;display:flex;flex-direction:column;gap:14px}
+.label{font:600 12px/1.2 var(--f-label);letter-spacing:.16em;text-transform:uppercase}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.top h1{margin:0;font:700 24px/1.25 var(--f-ui);letter-spacing:.01em}
+.top h1 .label{display:block;color:var(--blue);margin-bottom:3px}
+.save{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.save::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--muted);opacity:.5}
+.save.ok::before{background:var(--c-elec);opacity:1}
+.save.busy::before{background:var(--blue);opacity:1;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.25}}
+
+/* hero */
+.hero{background:var(--hero);color:var(--on-hero);border-radius:20px;padding:20px 20px 16px;display:flex;flex-direction:column;gap:14px}
+.h-label{color:var(--on-hero-2)}
+.h-label b{color:var(--mint);font-weight:600}
+.h-big{font:800 clamp(44px,13vw,64px)/1 var(--f-num);letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:6px}
+.h-big small{font:600 .34em/1 var(--f-num);letter-spacing:.04em;color:var(--on-hero-2);margin-right:.25em;vertical-align:.9em}
+.h-meter{position:relative;height:10px;border-radius:99px;background:var(--hero-btn);overflow:hidden}
+.h-meter .band{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,var(--hero-band) 0 4px,transparent 4px 7px)}
+.h-meter .fill{position:absolute;left:0;top:0;bottom:0;background:var(--mint);border-radius:99px}
+.h-meter .fill.over{background:#FF8C7A}
+.h-scale{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--on-hero-2);margin-top:-6px}
+.h-scale b{font:600 13px/1 var(--f-num);color:var(--on-hero);letter-spacing:.02em}
+.h-stats{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.8fr) minmax(0,1fr);margin:0;border-top:1px solid var(--hero-line);padding-top:12px}
+.h-stats > div{min-width:0;padding-right:8px}
+.h-stats > div + div{border-left:1px solid var(--hero-line);padding-left:12px}
+.h-stats dt{font-size:12px;color:var(--on-hero-2)}
+.h-stats dd{margin:2px 0 0;font:700 clamp(16px,4.4vw,22px)/1.2 var(--f-num);white-space:nowrap;font-variant-numeric:tabular-nums}
+.h-stats dd i{font:500 12px/1 var(--f-ui);font-style:normal;color:var(--on-hero-2);margin-left:2px}
+.h-chip{display:inline-block;font:700 12.5px/1 var(--f-ui);padding:5px 9px;border-radius:99px;background:var(--mint);color:var(--on-mint)}
+.h-chip.bad{background:#FF8C7A;color:#10151B}
+.h-chip.none{background:var(--hero-btn);color:var(--on-hero-2)}
+.h-next{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:10px 14px;border:0;border-radius:14px;background:var(--hero-btn);color:var(--on-hero);text-align:left;transition:background .16s var(--ease)}
+.h-next:hover{background:var(--hero-line)}
+.h-next .dot{width:10px;height:10px;border-radius:50%;background:var(--mint);flex:none;box-shadow:0 0 0 4px rgba(215,242,186,.18)}
+.h-next span{min-width:0}
+.h-next small{display:block;font-size:12px;color:var(--on-hero-2)}
+.h-next b{display:block;font-weight:700;font-size:15.5px;line-height:1.35}
+.h-next .r{margin-left:auto;flex:none;font:500 22px/1 var(--f-num);color:var(--on-hero-2)}
+
+/* cash staircase (collapsed) */
+.fold-card{background:var(--card);border:1px solid var(--line);border-radius:16px}
+.fold-card > summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 16px;cursor:pointer}
+.fold-card > summary::-webkit-details-marker{display:none}
+.fold-card > summary .label{color:var(--blue)}
+.fold-card > summary b{font-weight:700;font-size:15px}
+.fold-card > summary .r{margin-left:auto;font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.fold-card > summary .r::after{content:"+";font:500 20px/1 var(--f-num);color:var(--ink-2)}
+.fold-card[open] > summary .r::after{content:"−"}
+.fold-body{padding:0 16px 16px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted);margin-bottom:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:10px;border-radius:2px}
+.sw.lo{background:var(--range-1)} .sw.hi{background:repeating-linear-gradient(135deg,var(--range-2) 0 3px,var(--range-1) 3px 4.5px)}
+.sw.paid{background:var(--blue);width:5px} .sw.ref{width:12px;height:0;border-top:1.5px dashed var(--ink-2);border-radius:0}
+.st{display:grid;grid-template-columns:28px minmax(0,1fr) 54px;grid-template-rows:180px auto}
+.st-y{position:relative}
+.st-y span{position:absolute;right:6px;transform:translateY(50%);font:500 11px/1 var(--f-num);color:var(--muted)}
+.st-plot{position:relative;border-bottom:1px solid var(--line-2)}
+.st-grid{position:absolute;left:0;right:0;border-top:1px solid var(--line)}
+.st-ref{position:absolute;left:0;right:-54px;border-top:1.5px dashed var(--ink-2);opacity:.5;pointer-events:none}
+.st-refl{position:relative}
+.st-refl span{position:absolute;left:6px;transform:translateY(50%);font-size:11px;line-height:1.1;color:var(--ink-2);white-space:nowrap}
+.st-cols{position:absolute;inset:0;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
+.st-col{position:relative;outline-offset:-2px}
+.st-col .lo,.st-col .hi,.st-col .pd{position:absolute;left:20%;right:20%}
+.st-col .lo{bottom:0;background:var(--range-1)}
+.st-col .hi{background:repeating-linear-gradient(135deg,var(--range-2) 0 4px,var(--range-1) 4px 6px);border-radius:4px 4px 0 0}
+.st-col .pd{bottom:0;left:calc(50% - 3px);right:auto;width:6px;background:var(--blue);border-radius:3px 3px 0 0;box-shadow:0 0 0 2px var(--card)}
+.st-col .v{position:absolute;left:0;right:0;text-align:center;font:600 11.5px/1.1 var(--f-num);color:var(--ink);white-space:nowrap}
+.st-col .v .a{display:none}
+.st-col:hover,.st-col:focus-visible{background:var(--paper)}
+.st-x{grid-column:2;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);padding-top:6px}
+.st-x span{text-align:center;font:700 12px/1.2 var(--f-num);color:var(--muted);letter-spacing:.04em}
+.st-x span.now{color:var(--blue)}
+@media (min-width:560px){.st-col .v .a{display:inline}}
+
+/* toolbar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;align-items:center;gap:8px;margin-inline:calc(var(--gutter) * -1);padding:8px var(--gutter);background:color-mix(in oklab,var(--paper) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:border-color .2s}
+.bar.stuck{border-bottom-color:var(--line)}
+.seg{display:inline-flex;background:var(--paper-2);border-radius:99px;padding:3px}
+.seg button{border:0;background:transparent;min-height:36px;padding:0 14px;border-radius:99px;font-size:14px;font-weight:500;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.bar .grow{flex:1}
+.ghost{border:0;background:transparent;min-height:40px;padding:0 10px;border-radius:10px;font-size:13.5px;color:var(--ink-2)}
+.ghost:hover{background:var(--paper-2)}
+
+/* batches */
+.ledger{display:flex;flex-direction:column;gap:12px}
+.batch{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.batch.is-skip{background:transparent;border-style:dashed}
+.b-head{display:flex;align-items:stretch}
+.b-fold{flex:1;min-width:0;display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:12px;border:0;background:transparent;padding:14px 4px 12px 14px;text-align:left}
+.b-no{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font:800 19px/1 var(--f-num);letter-spacing:.02em;background:var(--paper-2);color:var(--muted)}
+.b-no.now{background:var(--blue);color:var(--on-blue)}
+.b-no.done{background:var(--mint);color:var(--on-mint)}
+.b-no svg{width:20px;height:20px}
+.b-t{min-width:0}
+.b-t b{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font:700 17px/1.35 var(--f-ui);letter-spacing:.01em}
+.b-t small{display:block;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b-sum{text-align:right;white-space:nowrap}
+.b-sum b{font:700 17px/1.2 var(--f-num);font-variant-numeric:tabular-nums}
+.b-sum b i{font:500 12px/1 var(--f-ui);font-style:normal;color:var(--muted);margin-left:2px}
+.b-sum small{display:block;font:500 12px/1.4 var(--f-num);color:var(--muted)}
+.b-t small .paid{color:var(--blue);font-weight:500}
+.b-t small .over{color:var(--bad);font-weight:700}
+.b-edit{flex:none;width:44px;border:0;background:transparent;color:var(--muted);display:grid;place-items:center}
+.b-edit:hover{color:var(--ink)}
+.b-edit svg{width:18px;height:18px}
+.b-bar{height:3px;background:var(--paper-2);margin-inline:14px;border-radius:9px;overflow:hidden}
+.b-bar i{display:block;height:100%;background:var(--blue);border-radius:9px;transition:width .3s var(--ease)}
+.b-bar.done i{background:var(--c-elec)}
+.rows{padding-top:4px}
+.item{display:grid;grid-template-columns:56px minmax(0,1fr);align-items:stretch;border-top:1px solid var(--line)}
+.rows .item:first-child{border-top:0}
+.stamp{border:0;background:transparent;display:grid;place-items:center;padding:0}
+.stamp .c{width:28px;height:28px;border-radius:50%;border:1.6px dashed var(--line-2);display:grid;place-items:center;color:transparent;transition:transform .18s var(--spring),background .15s,border-color .15s}
+.stamp .c svg{width:16px;height:16px}
+.stamp:hover .c{border-color:var(--blue)}
+.stamp[aria-pressed="true"] .c{background:var(--blue);border:1.6px solid var(--blue);color:var(--on-blue);transform:scale(1.04)}
+.stamp-ph{display:block}
+.item-main{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:12px;min-height:60px;padding:10px 16px 10px 0;border:0;background:transparent;text-align:left}
+.item-main:hover .nm{color:var(--blue)}
+.nm{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-weight:500;font-size:16px;line-height:1.35}
+.is-done .nm{color:var(--muted)}
+.meta{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;margin-top:2px}
+.meta > *{flex:none}
+.meta .note{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.meta .sep{opacity:.5}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:1px}
+.cat-work{background:var(--c-work)} .cat-furn{background:var(--c-furn)} .cat-elec{background:var(--c-elec)}
+.tag{font-size:11px;font-weight:700;line-height:1;padding:3px 6px;border-radius:5px}
+.tag.est{background:var(--blue-wash);color:var(--blue)}
+.tag.bad{background:var(--bad-wash);color:var(--bad)}
+.amt{text-align:right;white-space:nowrap}
+.amt b{font:700 17px/1.2 var(--f-num);font-variant-numeric:tabular-nums}
+.amt b.over{color:var(--bad)}
+.amt .plan{font:500 15px/1.2 var(--f-num);color:var(--muted);font-variant-numeric:tabular-nums}
+.amt i{font:500 11.5px/1 var(--f-ui);font-style:normal;color:var(--muted);margin-left:2px}
+.empty{padding:14px 16px 14px 56px;font-size:13.5px;color:var(--muted);border-top:1px solid var(--line)}
+.add{display:flex;align-items:center;gap:8px;width:100%;min-height:52px;border:0;border-top:1px solid var(--line);background:transparent;padding:0 16px 0 18px;color:var(--blue);font-weight:700;font-size:15px}
+.add .plus{width:20px;height:20px;border-radius:50%;background:var(--blue);color:var(--on-blue);display:grid;place-items:center;font:600 16px/1 var(--f-num);margin-right:10px}
+.add:hover{background:var(--blue-wash)}
+.add-batch{min-height:52px;border:1.5px dashed var(--line-2);border-radius:16px;background:transparent;color:var(--ink-2);font-weight:700;font-size:15px}
+.add-batch:hover{border-color:var(--blue);color:var(--blue)}
+
+.state-box{background:var(--card);border:1px dashed var(--line-2);border-radius:18px;padding:28px 20px;text-align:center;color:var(--muted)}
+.state-box b{display:block;font:700 18px/1.4 var(--f-ui);color:var(--ink);margin-bottom:2px}
+.banner{font-size:13px;color:var(--ink-2);background:var(--blue-wash);border-radius:10px;padding:8px 12px}
+.save.warn::before{background:#E8A23A;opacity:1}
+.save.bad::before{background:var(--bad);opacity:1}
+body.locked .page > :not(.top):not(#gate){display:none!important}
+.gate{background:var(--hero);color:var(--on-hero);border-radius:20px;padding:28px 20px 22px;display:flex;flex-direction:column;gap:10px}
+.gate .label{color:var(--mint)}
+.gate h2{margin:0;font:700 24px/1.3 var(--f-ui)}
+.gate p{margin:0;font-size:14px;color:var(--on-hero-2)}
+.gate form{display:flex;gap:8px;margin-top:8px}
+.gate .in{flex:1;min-width:0;background:var(--hero-btn);border-color:var(--hero-line);color:var(--on-hero);font-family:var(--f-num)}
+.gate .in::placeholder{color:var(--on-hero-2)}
+.gate .pill{min-height:48px;flex:none}
+.gate-err{min-height:1.4em;color:#FF8C7A!important;font-weight:500}
+
+/* bottom */
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:99px;border:0;background:var(--ink);color:var(--paper);font-weight:700;font-size:14px}
+.pill.light{background:var(--paper-2);color:var(--ink)}
+.pill.blue{background:var(--blue);color:var(--on-blue)}
+.pill:hover{filter:brightness(1.08)}
+.notes{font-size:13px;color:var(--muted)}
+.notes > summary{cursor:pointer;min-height:40px;display:flex;align-items:center;list-style:none;font-weight:700;color:var(--ink-2)}
+.notes > summary::-webkit-details-marker{display:none}
+.notes > summary::after{content:"+";margin-left:8px;font:500 18px/1 var(--f-num)}
+.notes[open] > summary::after{content:"−"}
+.notes ul{margin:0;padding-left:1.1em;display:grid;gap:4px}
+
+/* sheet */
+.scrim{position:fixed;inset:0;z-index:60;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .2s var(--ease)}
+.scrim.on{opacity:1}
+.sheet{width:min(560px,100%);max-height:92dvh;overflow:auto;background:var(--card);color:var(--ink);border-radius:22px 22px 0 0;box-shadow:var(--shadow);padding:0 18px calc(18px + env(safe-area-inset-bottom,0px));transform:translateY(24px);transition:transform .26s var(--ease)}
+.scrim.on .sheet{transform:none}
+@media (min-width:720px){.scrim{align-items:center}.sheet{border-radius:22px;max-height:86vh}}
+.sh-head{position:sticky;top:0;z-index:1;background:var(--card);display:flex;align-items:center;gap:10px;padding:10px 0 10px}
+.sh-head::before{content:"";position:absolute;left:50%;top:6px;width:36px;height:4px;margin-left:-18px;border-radius:9px;background:var(--line-2)}
+.sh-head h2{margin:10px 0 0;font:700 18px/1.3 var(--f-ui);letter-spacing:.01em;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-head .pill{margin-top:10px;min-height:40px;padding:0 18px}
+.fields{display:grid;gap:14px;padding-top:4px}
+.fl{display:grid;gap:6px}
+.fl > span{font-size:13px;font-weight:500;color:var(--muted)}
+.fl > span em{font-style:normal;font-family:var(--f-label);letter-spacing:.08em;margin-left:4px;opacity:.8}
+.in{width:100%;min-height:48px;padding:10px 14px;border-radius:12px;border:1px solid var(--line-2);background:var(--paper);font-size:16px;color:var(--ink);appearance:none;-webkit-appearance:none}
+.in:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-wash)}
+.in.big{font:700 22px/1.2 var(--f-num);font-variant-numeric:tabular-nums}
+.in.numf{font:600 18px/1.2 var(--f-num);font-variant-numeric:tabular-nums}
+select.in{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 15px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:36px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.cats button{min-height:46px;border-radius:12px;border:1px solid var(--line-2);background:var(--paper);font-weight:500;font-size:15px;display:flex;align-items:center;justify-content:center;gap:6px}
+.cats button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.done-row{display:flex;align-items:center;gap:12px;min-height:56px;padding:0 14px;border-radius:14px;border:1px solid var(--line-2);background:var(--paper);width:100%;text-align:left;font-weight:700;font-size:15px}
+.done-row .c{width:28px;height:28px;border-radius:50%;border:1.6px dashed var(--line-2);display:grid;place-items:center;color:transparent}
+.done-row .c svg{width:16px;height:16px}
+.done-row[aria-pressed="true"]{background:var(--blue-wash);border-color:var(--blue);color:var(--blue)}
+.done-row[aria-pressed="true"] .c{background:var(--blue);border:1.6px solid var(--blue);color:var(--on-blue)}
+.hint{font-size:12.5px;color:var(--muted);margin-top:-6px}
+.hint.est{color:var(--blue)}
+.danger{justify-self:start;border:0;background:transparent;color:var(--bad);font-weight:700;font-size:14px;min-height:44px;padding:0 4px}
+.danger:disabled{color:var(--muted);cursor:not-allowed}
+
+/* tooltip, toast, copy panel */
+.tooltip{position:fixed;z-index:30;pointer-events:none;background:var(--card);border:1px solid var(--line-2);border-radius:12px;box-shadow:var(--shadow);padding:10px 12px;font-size:13px;min-width:190px}
+.tooltip b{display:block;margin-bottom:4px}
+.tooltip .tr{display:flex;justify-content:space-between;gap:14px;color:var(--muted)}
+.tooltip .tr span:last-child{font-family:var(--f-num);font-weight:600;color:var(--ink)}
+.toasts{position:fixed;left:0;right:0;bottom:0;z-index:80;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 16px calc(16px + env(safe-area-inset-bottom,0px));pointer-events:none}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:14px;background:var(--ink);color:var(--paper);border-radius:14px;padding:12px 16px;font-size:14px;box-shadow:var(--shadow);max-width:100%}
+.toast button{border:0;background:var(--mint);color:var(--on-mint);font-weight:700;border-radius:99px;padding:6px 12px;min-height:32px}
+.copy-ta{width:100%;height:200px;font:12px/1.5 ui-monospace,Consolas,monospace;background:var(--paper);color:var(--ink);border:1px solid var(--line-2);border-radius:10px;padding:8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <h1><span class="label" id="eyebrow">Ledger</span><span id="title">帳本</span></h1>
+    <span id="save-state" class="save" aria-live="polite"></span>
+  </header>
+
+  <section class="gate" id="gate" hidden>
+    <span class="label">Private</span>
+    <h2>輸入鑰匙</h2>
+    <p>鑰匙只存在這支手機，不會傳到別的地方。</p>
+    <form id="gate-form" autocomplete="off">
+      <input class="in" id="gate-key" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_…" aria-label="鑰匙">
+      <button class="pill blue" type="submit" id="gate-go">打開</button>
+    </form>
+    <p class="gate-err" id="gate-err" role="alert"></p>
+  </section>
+
+  <section class="hero" id="hero" aria-label="總覽"></section>
+
+  <details class="fold-card" id="stairs-box">
+    <summary><span class="label">Cash</span><b>每梯累計</b><span class="r" id="stairs-sum"></span></summary>
+    <div class="fold-body">
+      <div class="legend"><span><i class="sw lo"></i>至少</span><span><i class="sw hi"></i>最多</span><span><i class="sw paid"></i>已付</span><span><i class="sw ref"></i>原規劃建議</span></div>
+      <div id="stairs"></div>
+    </div>
+  </details>
+
+  <div class="bar" id="bar">
+    <div class="seg" role="group" aria-label="篩選">
+      <button type="button" data-status="all">全部</button>
+      <button type="button" data-status="open">未完成</button>
+      <button type="button" data-status="done">已完成</button>
+    </div>
+    <span class="grow"></span>
+    <button type="button" class="ghost" id="btn-fold-all">全部收合</button>
+  </div>
+
+  <div id="banner"></div>
+  <main class="ledger" id="ledger"></main>
+  <button type="button" class="add-batch" id="btn-add-batch" hidden>＋ 新增梯次</button>
+
+  <div class="tools">
+    <button type="button" class="pill light" id="btn-copy">複製到 Excel</button>
+    <button type="button" class="pill light" id="btn-csv" hidden>匯出 CSV</button>
+    <button type="button" class="pill light" id="btn-lock" hidden>這支手機登出</button>
+  </div>
+  <details class="notes">
+    <summary>說明</summary>
+    <ul id="notes-list">
+      <li>預算填「萬」，實付填「元」（也可打 1.28萬）。</li>
+      <li>「估」＝原本合併估算、拆開後分配的金額，改過就消失。</li>
+      <li>打勾時日期空白，會自動填今天。</li>
+    </ul>
+  </details>
+</div>
+
+<div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+<div id="toasts" class="toasts" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+const CATS = ['工程', '傢俱', '電器'];
+const CAT_CLASS = { '工程': 'work', '傢俱': 'furn', '電器': 'elec' };
+const $ = s => document.querySelector(s);
+const ledger = $('#ledger'), hero = $('#hero'), stairs = $('#stairs'), bar = $('#bar');
+const tip = $('#tooltip'), toasts = $('#toasts'), saveState = $('#save-state'), banner = $('#banner');
+
+const ICON_CHECK = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_EDIT = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 13.8V16h2.2l7.9-7.9-2.2-2.2L4 13.8zM13.4 4.4l2.2 2.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+const state = { mode: 'loading', batches: new Map(), items: new Map(), meta: {} };
+let db = null, downloads = null, pending = 0, stairRows = [];
+
+/* ---------- per-viewer UI prefs ---------- */
+const UI_KEY = 'reno-ledger-ui-v2';
+let ui = { status: 'all', collapsed: {}, stairs: false };
+try {
+  const s = JSON.parse(localStorage.getItem(UI_KEY) || 'null');
+  if (s && typeof s === 'object') ui = { ...ui, ...s, collapsed: { ...(s.collapsed || {}) } };
+} catch (e) {}
+const saveUi = () => { try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (e) {} };
+
+/* ---------- formatting ---------- */
+const nf = new Intl.NumberFormat('zh-TW');
+const isNum = v => typeof v === 'number' && isFinite(v);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function wan(n) { const v = Math.round(n / 100) / 100; return String(Math.abs(v) >= 10 ? Math.round(v * 10) / 10 : v); }
+function rangeText(lo, hi) { lo = lo || 0; hi = Math.max(hi || 0, lo); if (!lo && !hi) return '—'; return lo === hi ? wan(lo) : `${wan(lo)}～${wan(hi)}`; }
+const money = n => nf.format(Math.round(n || 0));
+const budgetVal = v => isNum(v) ? String(Math.round(v / 100) / 100) : '';
+const pad2 = n => String(n).padStart(2, '0');
+function today() { const d = new Date(); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; }
+const shortDate = s => { const m = /^\d{4}-(\d{2})-(\d{2})$/.exec(s || ''); return m ? `${+m[1]}/${+m[2]}` : ''; };
+function parseBudget(str) {
+  let s = String(str).replace(/[,\s]/g, '');
+  if (!s) return null;
+  let mult = 10000;
+  if (/元$/.test(s)) { mult = 1; s = s.slice(0, -1); }
+  else if (/萬$/.test(s)) s = s.slice(0, -1);
+  const n = parseFloat(s);
+  if (!isFinite(n) || n < 0) return undefined;
+  if (mult === 10000 && n >= 1000) mult = 1;
+  return Math.round(n * mult);
+}
+function parsePaid(str) {
+  let s = String(str).replace(/[,\s]|NT\$|\$|元/gi, '');
+  if (!s) return null;
+  let mult = 1;
+  if (/萬$/.test(s)) { mult = 10000; s = s.slice(0, -1); }
+  const n = parseFloat(s);
+  if (!isFinite(n) || n < 0) return undefined;
+  return Math.round(n * mult);
+}
+const newId = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+/* ---------- data helpers ---------- */
+const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0) || (a.created ?? 0) - (b.created ?? 0) || String(a.id).localeCompare(String(b.id));
+const planBatches = () => [...state.batches.values()].filter(b => b.kind !== 'skip').sort(byOrder);
+const skipBatches = () => [...state.batches.values()].filter(b => b.kind === 'skip').sort(byOrder);
+const itemsIn = bid => [...state.items.values()].filter(i => i.batch === bid).sort(byOrder);
+const orphanItems = () => [...state.items.values()].filter(i => !state.batches.has(i.batch)).sort(byOrder);
+const planItems = () => [...state.items.values()].filter(i => { const b = state.batches.get(i.batch); return !b || b.kind !== 'skip'; });
+function sumItems(list) {
+  let lo = 0, hi = 0, paid = 0, done = 0, paidCount = 0, rLo = 0, rHi = 0;
+  for (const i of list) {
+    const l = +i.lo || 0, h = Math.max(+i.hi || 0, l), p = isNum(i.paid) ? i.paid : 0;
+    lo += l; hi += h; paid += p;
+    if (isNum(i.paid)) paidCount++;
+    if (i.done) done++; else { rLo += Math.max(0, l - p); rHi += Math.max(0, h - p); }
+  }
+  return { lo, hi, paid, done, n: list.length, paidCount, rLo, rHi };
+}
+const no2 = n => pad2(n);
+function batchNo(b) { return planBatches().findIndex(x => x.id === b.id) + 1; }
+function batchLabel(b) {
+  if (!b) return '';
+  if (b.kind === 'skip') return b.title || '不用買／已有';
+  return `${no2(batchNo(b))} ${b.title || '未命名'}`;
+}
+function nextBatch() { return planBatches().find(b => itemsIn(b.id).some(i => !i.done)) || null; }
+function passes(i) {
+  if (ui.status === 'open' && i.done) return false;
+  if (ui.status === 'done' && !i.done) return false;
+  return true;
+}
+const isCollapsed = b => ui.collapsed[b.id] ?? (b.kind === 'skip');
+
+/* ---------- store: claude.ai db when opened as an Artifact; otherwise a private GitHub repo ---------- */
+const GH = { owner: 'samhere723-alt', repo: 'd-lzzxvl0d8h', path: 'ledger.json', branch: 'main' };
+const TOKEN_KEY = 'reno-ledger-gh-token', OUTBOX_KEY = 'reno-ledger-gh-outbox', CACHE_KEY = 'reno-ledger-gh-cache';
+const queues = new Map();
+const mapOf = col => col === 'items' ? state.items : state.batches;
+function applyLocal(col, id, data) { const m = mapOf(col); if (data === null) m.delete(id); else m.set(id, { ...data, id }); schedule(); }
+function strip(d) { const { id, ...rest } = d; return rest; }
+const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const lsSet = (k, v) => { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); return true; } catch (e) { return false; } };
+
+function write(path, fn) {
+  pending++; showSave();
+  const run = async retried => {
+    try { await fn(); }
+    catch (err) {
+      if (err && err.code === 'unavailable' && !retried) { await new Promise(r => setTimeout(r, 400 + Math.random() * 800)); return run(true); }
+      onWriteError(err);
+    }
+  };
+  const p = (queues.get(path) || Promise.resolve()).then(() => run(false)).finally(() => { pending--; showSave(); });
+  queues.set(path, p);
+  return p;
+}
+function onWriteError(err) {
+  const code = err && err.code;
+  toast(code === 'quota_exceeded' ? '帳本存滿了，刪掉一些再試' : code === 'invalid_argument' ? '沒存到：你可能只有檢視權限' : code === 'revoked' ? '存取權變了，重新整理看看' : '連線不穩，這筆沒存到');
+}
+function setDoc(col, id, data) {
+  applyLocal(col, id, data);
+  if (state.mode === 'gh') return outboxAdd(col, id, 'set', strip(data));
+  if (db) write(`${col}/${id}`, () => db.collection(col).doc(id).set(strip(data)));
+}
+function updateDoc(col, id, patch) {
+  const old = mapOf(col).get(id); if (!old) return;
+  applyLocal(col, id, { ...old, ...patch });
+  if (state.mode === 'gh') return outboxAdd(col, id, 'patch', patch);
+  if (db) write(`${col}/${id}`, () => db.collection(col).doc(id).update(patch));
+}
+function removeDoc(col, id) {
+  applyLocal(col, id, null);
+  if (state.mode === 'gh') return outboxAdd(col, id, 'del', null);
+  if (db) write(`${col}/${id}`, () => db.collection(col).doc(id).delete());
+}
+
+/* GitHub sync: the whole ledger is one JSON file. Edits wait in an outbox kept on the phone,
+   then get merged onto the newest copy and written back with its sha, so two phones don't overwrite each other. */
+let ghToken = '', ghBase = null, ghSha = '', outbox = [], outSeq = 0, flushing = false, flushTimer = 0, backoff = 0, syncErr = '', gateMsg = '';
+function b64dec(s) { const bin = atob(String(s).replace(/\s/g, '')); return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0))); }
+function b64enc(str) { const bytes = new TextEncoder().encode(str); let bin = ''; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(bin); }
+function ghFetch(method, body) {
+  return fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.path}${method === 'GET' ? `?ref=${GH.branch}` : ''}`, {
+    method, cache: 'no-store', referrerPolicy: 'no-referrer',
+    headers: { Authorization: `Bearer ${ghToken}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(body ? { 'Content-Type': 'application/json' } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+}
+async function ghPull() {
+  let r;
+  try { r = await ghFetch('GET'); } catch (e) { throw { code: 'net' }; }
+  if (r.status === 401) throw { code: 'auth' };
+  if (r.status === 404 || r.status === 403) throw { code: 'notfound' };
+  if (!r.ok) throw { code: 'net' };
+  const j = await r.json();
+  return { sha: j.sha, data: JSON.parse(b64dec(j.content)) };
+}
+async function ghPut(data, sha) {
+  let r;
+  try { r = await ghFetch('PUT', { message: 'update', content: b64enc(JSON.stringify(data, null, 1)), sha, branch: GH.branch }); } catch (e) { return { ok: false, status: 0 }; }
+  if (r.ok) { const j = await r.json(); return { ok: true, sha: j.content.sha }; }
+  return { ok: false, status: r.status };
+}
+function applyOps(base, ops) {
+  const d = { ...base, batches: { ...(base.batches || {}) }, items: { ...(base.items || {}) } };
+  const now = Date.now();
+  for (const o of ops) {
+    const m = d[o.col]; if (!m) continue;
+    if (o.op === 'del') delete m[o.id];
+    else if (o.op === 'set') m[o.id] = { ...o.data, updatedAt: now };
+    else if (m[o.id]) m[o.id] = { ...m[o.id], ...o.data, updatedAt: now };
+  }
+  return d;
+}
+function saveOutbox() { lsSet(OUTBOX_KEY, outbox.length ? JSON.stringify({ seq: outSeq, ops: outbox }) : null); }
+function loadOutbox() {
+  try { const o = JSON.parse(lsGet(OUTBOX_KEY) || 'null'); if (o && Array.isArray(o.ops)) { outbox = o.ops; outSeq = o.seq || 0; } } catch (e) {}
+}
+function outboxAdd(col, id, op, data) {
+  const key = col + '/' + id; outSeq++;
+  const ex = outbox.find(o => o.key === key);
+  if (!ex) outbox.push({ key, col, id, op, data: data ? { ...data } : null, seq: outSeq });
+  else {
+    if (op === 'del') { ex.op = 'del'; ex.data = null; }
+    else if (op === 'set') { ex.op = 'set'; ex.data = { ...data }; }
+    else if (ex.op !== 'del') ex.data = { ...(ex.data || {}), ...data };
+    ex.seq = outSeq;
+  }
+  saveOutbox();
+  scheduleFlush(1200);
+}
+function viewFrom(base) {
+  const v = applyOps(base, outbox);
+  state.meta = v.meta || {};
+  state.batches = new Map(Object.entries(v.batches || {}).map(([id, d]) => [id, { ...d, id }]));
+  state.items = new Map(Object.entries(v.items || {}).map(([id, d]) => [id, { ...d, id }]));
+  schedule();
+}
+function cacheBase() { lsSet(CACHE_KEY, JSON.stringify({ sha: ghSha, data: ghBase })); }
+function scheduleFlush(delay) { clearTimeout(flushTimer); flushTimer = setTimeout(ghFlush, delay); showSave(); }
+async function ghFlush() {
+  flushTimer = 0;
+  if (flushing || !outbox.length || state.mode !== 'gh') return;
+  flushing = true; showSave();
+  let upto = 0, done = false;
+  try {
+    for (let attempt = 0; attempt < 4 && !done; attempt++) {
+      const remote = await ghPull();
+      upto = outSeq;
+      const merged = applyOps(remote.data, outbox.map(o => ({ ...o })));
+      const res = await ghPut(merged, remote.sha);
+      if (res.ok) {
+        ghBase = merged; ghSha = res.sha; cacheBase();
+        outbox = outbox.filter(o => o.seq > upto); saveOutbox();
+        backoff = 0; syncErr = ''; done = true;
+        viewFrom(ghBase);
+      } else if (res.status === 409 || res.status === 422) continue;
+      else if (res.status === 401) throw { code: 'auth' };
+      else if (res.status === 403 || res.status === 404) throw { code: 'perm' };
+      else throw { code: 'net' };
+    }
+    if (!done) throw { code: 'net' };
+  } catch (e) {
+    onGhError(e);
+    if (state.mode === 'gh' && e.code === 'net') { backoff = Math.min(60000, (backoff || 2000) * 2); scheduleFlush(backoff); }
+  } finally {
+    flushing = false; showSave();
+    if (done && outbox.length) scheduleFlush(800);
+  }
+}
+async function ghRefresh() {
+  if (state.mode !== 'gh' || flushing || document.hidden) return;
+  try {
+    const r = await ghPull();
+    syncErr = '';
+    if (r.sha !== ghSha) { ghBase = r.data; ghSha = r.sha; cacheBase(); viewFrom(ghBase); }
+  } catch (e) { onGhError(e); }
+  showSave();
+}
+function onGhError(e) {
+  const code = e && e.code;
+  if (code === 'auth' || code === 'notfound') {
+    gateMsg = code === 'auth' ? '鑰匙不對或已過期，請重新輸入。' : '這把鑰匙打不開這本帳：權限沒有勾到資料 repo。';
+    lsSet(TOKEN_KEY, null); lsSet(CACHE_KEY, null); ghToken = ''; ghBase = null; ghSha = '';
+    state.batches = new Map(); state.items = new Map(); state.meta = {};
+    state.mode = 'gh-setup'; schedule();
+  } else if (code === 'perm') syncErr = '這把鑰匙不能寫入';
+  else syncErr = '離線';
+  showSave();
+}
+async function unlock(token) {
+  ghToken = token;
+  const r = await ghPull();
+  lsSet(TOKEN_KEY, token);
+  ghBase = r.data; ghSha = r.sha; cacheBase();
+  state.mode = 'gh'; gateMsg = ''; syncErr = '';
+  viewFrom(ghBase);
+  if (outbox.length) scheduleFlush(300);
+}
+async function startGh() {
+  loadOutbox();
+  const token = lsGet(TOKEN_KEY);
+  if (!token) { state.mode = 'gh-setup'; schedule(); return; }
+  ghToken = token;
+  try {
+    const c = JSON.parse(lsGet(CACHE_KEY) || 'null');
+    if (c && c.data) { ghBase = c.data; ghSha = c.sha; state.mode = 'gh'; viewFrom(ghBase); }
+  } catch (e) {}
+  try { await unlock(token); }
+  catch (e) {
+    if (e.code === 'net' && ghBase) { syncErr = '離線'; showSave(); }
+    else if (e.code === 'net') { state.mode = 'error'; schedule(); }
+    else onGhError(e);
+  }
+}
+let ghWatching = false;
+function watchGh() {
+  if (ghWatching) return; ghWatching = true;
+  setInterval(ghRefresh, 30000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && state.mode === 'gh') { ghRefresh(); if (outbox.length) scheduleFlush(300); } });
+  addEventListener('online', () => { if (state.mode === 'gh' && outbox.length) scheduleFlush(300); });
+}
+
+function showSave() {
+  let cls = '', txt = '';
+  if (state.mode === 'db') { cls = pending > 0 ? ' busy' : ' ok'; txt = pending > 0 ? '儲存中' : '已同步'; }
+  else if (state.mode === 'gh') {
+    if (flushing) { cls = ' busy'; txt = '同步中'; }
+    else if (syncErr) { cls = syncErr === '離線' ? ' warn' : ' bad'; txt = outbox.length ? `${syncErr} · ${outbox.length} 筆待傳` : syncErr; }
+    else if (outbox.length) { cls = ' busy'; txt = `${outbox.length} 筆待傳`; }
+    else { cls = ' ok'; txt = '已同步'; }
+  }
+  saveState.className = 'save' + cls;
+  saveState.textContent = txt;
+}
+
+/* ---------- render scheduling (never while a finger is down) ---------- */
+let raf = 0, rto = 0, needRender = false, pointerDown = false, pointerTimer = 0;
+function schedule() {
+  needRender = true;
+  if (pointerDown || raf || rto) return;
+  raf = requestAnimationFrame(flush);
+  rto = setTimeout(flush, 150);
+}
+function flush() {
+  cancelAnimationFrame(raf); clearTimeout(rto); raf = 0; rto = 0;
+  if (!needRender || pointerDown) return;
+  needRender = false;
+  render();
+}
+function pointerRelease() { clearTimeout(pointerTimer); if (!pointerDown) return; pointerDown = false; if (needRender) setTimeout(schedule, 0); }
+document.addEventListener('pointerdown', () => { pointerDown = true; clearTimeout(pointerTimer); pointerTimer = setTimeout(pointerRelease, 2000); }, true);
+document.addEventListener('pointerup', pointerRelease, true);
+document.addEventListener('pointercancel', pointerRelease, true);
+
+function render() {
+  const ready = state.mode === 'db' || state.mode === 'gh';
+  renderMeta(); renderGate();
+  renderHero(ready); renderStairs(ready); renderBar(); renderLedger(); showSave();
+}
+
+function renderMeta() {
+  const m = state.meta || {};
+  const title = m.title || '帳本';
+  $('#title').textContent = title;
+  $('#eyebrow').textContent = m.subtitle || 'Ledger';
+  if (document.title !== title) document.title = title;
+  const list = $('#notes-list');
+  list.querySelectorAll('li.extra').forEach(li => li.remove());
+  (Array.isArray(m.notes) ? m.notes : []).forEach(t => { const li = document.createElement('li'); li.className = 'extra'; li.textContent = String(t); list.append(li); });
+  $('#btn-lock').hidden = state.mode !== 'gh';
+}
+function renderGate() {
+  const locked = state.mode === 'gh-setup';
+  document.body.classList.toggle('locked', locked);
+  $('#gate').hidden = !locked;
+  if (locked) $('#gate-err').textContent = gateMsg;
+}
+
+function renderHero(ready) {
+  if (!ready) {
+    hero.innerHTML = `<div><div class="label h-label">Paid · 已付</div><div class="h-big"><small>NT$</small>—</div></div><div class="h-meter"></div><div class="h-scale"><span>${state.mode === 'loading' ? '讀取中…' : '讀不到資料'}</span></div>`;
+    return;
+  }
+  const plan = planItems(), s = sumItems(plan);
+  const max = Math.max(s.hi, s.paid, 1);
+  const pct = v => Math.max(0, Math.min(100, v / max * 100)).toFixed(2) + '%';
+  const over = s.hi > 0 && s.paid > s.hi;
+  const settled = plan.filter(i => i.done && isNum(i.paid)), ds = sumItems(settled);
+  let chip;
+  if (!settled.length) chip = '<span class="h-chip none">還沒有</span>';
+  else if (ds.hi > 0 && ds.paid > ds.hi) chip = `<span class="h-chip bad">超 ${wan(ds.paid - ds.hi)} 萬</span>`;
+  else if (ds.paid < ds.lo) chip = `<span class="h-chip">省 ${wan(ds.lo - ds.paid)} 萬</span>`;
+  else chip = '<span class="h-chip">預算內</span>';
+  const nb = nextBatch();
+  let next = '';
+  if (nb) {
+    const ns = sumItems(itemsIn(nb.id));
+    next = `<button type="button" class="h-next" data-goto="${esc(nb.id)}"><i class="dot"></i><span><small>接下來 · 剩 ${ns.n - ns.done} 項 · 約 ${rangeText(ns.rLo, ns.rHi)} 萬</small><b>${no2(batchNo(nb))}　${esc(nb.title || '未命名')}</b></span><span class="r" aria-hidden="true">›</span></button>`;
+  } else if (plan.length) {
+    next = '<div class="h-next"><i class="dot"></i><span><b>全部完成</b></span></div>';
+  }
+  hero.innerHTML = `
+    <div><div class="label h-label">Paid · 已付</div><div class="h-big"><small>NT$</small>${money(s.paid)}</div></div>
+    <div class="h-meter" role="img" aria-label="已付 ${money(s.paid)} 元，預算 ${rangeText(s.lo, s.hi)} 萬">
+      <i class="band" style="left:${pct(s.lo)};right:calc(100% - ${pct(s.hi)})"></i>
+      <i class="fill${over ? ' over' : ''}" style="width:${pct(s.paid)}"></i>
+    </div>
+    <div class="h-scale"><span>預算</span><b>${rangeText(s.lo, s.hi)} 萬</b></div>
+    <dl class="h-stats">
+      <div><dt>還要準備</dt><dd>${rangeText(s.rLo, s.rHi)}<i>萬</i></dd></div>
+      <div><dt>完成</dt><dd>${s.done}<i>/ ${s.n}</i></dd></div>
+      <div><dt>付清的項目</dt><dd>${chip}</dd></div>
+    </dl>
+    ${next}`;
+}
+
+function renderStairs(ready) {
+  const box = $('#stairs-box');
+  if (box.open !== !!ui.stairs) box.open = !!ui.stairs;
+  const pb = ready ? planBatches() : [];
+  let cLo = 0, cHi = 0, cPaid = 0;
+  const nb = nextBatch();
+  stairRows = pb.map((b, i) => { const s = sumItems(itemsIn(b.id)); cLo += s.lo; cHi += s.hi; cPaid += s.paid; return { b, no: i + 1, s, cLo, cHi, cPaid, now: nb && nb.id === b.id }; });
+  $('#stairs-sum').textContent = pb.length ? `全部 ${rangeText(cLo, cHi)} 萬` : '';
+  if (!pb.length) { stairs.innerHTML = ''; return; }
+  const maxV = Math.max(cHi, cPaid, 400000);
+  const step = maxV <= 400000 ? 100000 : maxV <= 1000000 ? 200000 : maxV <= 2000000 ? 500000 : 1000000;
+  const max = Math.ceil(maxV / step) * step;
+  const p = v => (Math.max(0, Math.min(v, max)) / max * 100).toFixed(3) + '%';
+  const ticks = []; for (let v = 0; v <= max; v += step) ticks.push(v);
+  const refs = (Array.isArray(state.meta && state.meta.refs) ? state.meta.refs : []).filter(r => isNum(r.v) && r.v > 0 && r.v <= max);
+  stairs.innerHTML = `<div class="st">
+    <div class="st-y" aria-hidden="true">${ticks.map(v => `<span style="bottom:${p(v)}">${v / 10000}</span>`).join('')}</div>
+    <div class="st-plot">
+      ${ticks.slice(1).map(v => `<i class="st-grid" style="bottom:${p(v)}"></i>`).join('')}
+      ${refs.map(r => `<i class="st-ref" style="bottom:${p(r.v)}"></i>`).join('')}
+      <div class="st-cols">${stairRows.map((r, i) => `<div class="st-col" data-i="${i}" tabindex="0" role="img" aria-label="${esc(`第 ${r.no} 梯做完累計 ${rangeText(r.cLo, r.cHi)} 萬，累計已付 ${money(r.cPaid)} 元`)}">
+        <span class="lo" style="height:${p(r.cLo)}"></span>
+        ${r.cHi > r.cLo ? `<span class="hi" style="bottom:calc(${p(r.cLo)} + 2px);height:max(0px,calc(${p(r.cHi - r.cLo)} - 2px))"></span>` : ''}
+        ${r.cPaid > 0 ? `<span class="pd" style="height:${p(r.cPaid)}"></span>` : ''}
+        <span class="v" style="bottom:calc(${p(r.cHi)} + 5px)"><span class="a">${wan(r.cLo)}～</span>${wan(r.cHi)}</span>
+      </div>`).join('')}</div>
+    </div>
+    <div class="st-refl" aria-hidden="true">${refs.map(r => `<span style="bottom:${p(r.v)}">${r.t}</span>`).join('')}</div>
+    <div class="st-x" aria-hidden="true">${stairRows.map(r => `<span class="${r.now ? 'now' : ''}">${no2(r.no)}</span>`).join('')}</div>
+  </div>`;
+}
+
+function renderBar() {
+  bar.querySelectorAll('[data-status]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.status === ui.status)));
+  const all = [...state.batches.values()];
+  $('#btn-fold-all').textContent = all.length && all.every(isCollapsed) ? '全部展開' : '全部收合';
+}
+
+function renderLedger() {
+  banner.innerHTML = '';
+  $('#btn-add-batch').hidden = !(state.mode === 'db' || state.mode === 'gh');
+  if (state.mode === 'loading') { ledger.innerHTML = '<div class="state-box"><b>正在打開帳本…</b></div>'; return; }
+  if (state.mode === 'nodb') { ledger.innerHTML = '<div class="state-box"><b>讀不到這本帳</b>請登入 claude.ai 再打開。</div>'; return; }
+  if (state.mode === 'error') { ledger.innerHTML = '<div class="state-box"><b>連不上</b>確認有網路，再重新整理。</div>'; return; }
+  const orphans = orphanItems();
+  const groups = [
+    ...planBatches().map(b => ({ b })),
+    ...(orphans.length ? [{ b: { id: '__orphan', title: '沒有梯次的項目', when: '點開改梯次', kind: 'orphan' } }] : []),
+    ...skipBatches().map(b => ({ b })),
+  ];
+  if (!groups.length) { ledger.innerHTML = '<div class="state-box"><b>帳本是空的</b>按「＋ 新增梯次」開始。</div>'; return; }
+  const nb = nextBatch();
+  ledger.innerHTML = groups.map(g => renderBatch(g.b, nb)).join('');
+}
+
+function renderBatch(b, nb) {
+  const orphan = b.kind === 'orphan', skip = b.kind === 'skip';
+  const all = orphan ? orphanItems() : itemsIn(b.id);
+  const vis = all.filter(passes);
+  const s = sumItems(all);
+  const collapsed = !orphan && isCollapsed(b);
+  const status = skip || orphan ? 'later' : all.length && s.done === s.n ? 'done' : nb && nb.id === b.id ? 'now' : 'later';
+  const no = skip ? '—' : orphan ? '?' : no2(batchNo(b));
+  const badge = status === 'done' ? ICON_CHECK : no;
+  const over = !skip && s.hi > 0 && s.paid > s.hi;
+  const sum = skip
+    ? `<b>${all.length}<i>項</i></b><small>不算預算</small>`
+    : `<b>${rangeText(s.lo, s.hi)}<i>萬</i></b><small>${s.done}/${s.n}</small>`;
+  const sub = [esc(b.when || ''), !skip && s.paid ? `<span class="${over ? 'over' : 'paid'}">已付 ${wan(s.paid)} 萬</span>` : ''].filter(Boolean).join(' · ');
+  const rows = vis.map(i => renderItem(i, skip)).join('')
+    || `<div class="empty">${all.length ? '沒有符合的項目' : '還沒有項目'}</div>`;
+  return `<section class="batch${skip ? ' is-skip' : ''}" data-bid="${esc(b.id)}" id="batch-${esc(b.id)}">
+    <div class="b-head">
+      <button type="button" class="b-fold" data-act="fold" aria-expanded="${!collapsed}">
+        <span class="b-no ${status}" aria-hidden="true">${badge}</span>
+        <span class="b-t"><b>${esc(b.title || '未命名')}</b><small>${sub}</small></span>
+        <span class="b-sum">${sum}</span>
+      </button>
+      ${orphan ? '' : `<button type="button" class="b-edit" data-act="edit-batch" aria-label="編輯梯次">${ICON_EDIT}</button>`}
+    </div>
+    ${skip || orphan ? '' : `<div class="b-bar${status === 'done' ? ' done' : ''}"><i style="width:${s.n ? s.done / s.n * 100 : 0}%"></i></div>`}
+    <div class="rows"${collapsed ? ' hidden' : ''}>
+      ${rows}
+      ${orphan ? '' : '<button type="button" class="add" data-act="add-item"><span class="plus" aria-hidden="true">+</span>新增項目</button>'}
+    </div>
+  </section>`;
+}
+
+function renderItem(i, skip) {
+  const id = esc(i.id), cat = CATS.includes(i.cat) ? i.cat : '傢俱';
+  const paid = isNum(i.paid), has = (+i.lo || 0) > 0 || (+i.hi || 0) > 0;
+  const over = paid && isNum(i.hi) && i.hi > 0 && i.paid > i.hi;
+  const meta = [`<span><i class="dot cat-${CAT_CLASS[cat]}"></i>${cat}</span>`];
+  if (!skip && paid && has) meta.push(`<span>預算 ${rangeText(i.lo, i.hi)}</span>`);
+  if (over) meta.push(`<span class="tag bad">超 ${wan(i.paid - i.hi)} 萬</span>`);
+  if (i.est) meta.push('<span class="tag est">估</span>');
+  if (i.date && !skip) meta.push(`<span class="num">${shortDate(i.date)}</span>`);
+  if (i.note) meta.push(`<span class="note">${esc(i.note)}</span>`);
+  const amt = skip ? '' : paid ? `<b class="${over ? 'over' : ''}">${money(i.paid)}</b>` : has ? `<span class="plan">${rangeText(i.lo, i.hi)}<i>萬</i></span>` : '';
+  const name = esc(i.name || '（未命名）');
+  return `<div class="item${i.done ? ' is-done' : ''}" data-id="${id}">
+    ${skip ? '<span class="stamp-ph"></span>' : `<button type="button" class="stamp" data-act="toggle" aria-pressed="${!!i.done}" aria-label="完成：${name}"><span class="c">${ICON_CHECK}</span></button>`}
+    <button type="button" class="item-main" data-act="edit" aria-label="編輯 ${name}">
+      <span style="min-width:0"><span class="nm">${name}</span><span class="meta">${meta.join('<span class="sep">·</span>')}</span></span>
+      <span class="amt">${amt}</span>
+    </button>
+  </div>`;
+}
+
+/* ---------- edits from the list ---------- */
+function toggleDone(id) {
+  const it = state.items.get(id); if (!it) return;
+  const patch = { done: !it.done };
+  if (patch.done && !it.date) patch.date = today();
+  updateDoc('items', id, patch);
+}
+function moveTargets() { return [...planBatches(), ...skipBatches()]; }
+
+ledger.addEventListener('click', e => {
+  const btn = e.target.closest('[data-act]'); if (!btn) return;
+  const sec = btn.closest('[data-bid]'), row = btn.closest('[data-id]');
+  const act = btn.dataset.act;
+  if (act === 'toggle' && row) toggleDone(row.dataset.id);
+  else if (act === 'edit' && row) openItemSheet(row.dataset.id);
+  else if (act === 'add-item' && sec) openItemSheet(null, sec.dataset.bid);
+  else if (act === 'edit-batch' && sec) openBatchSheet(sec.dataset.bid);
+  else if (act === 'fold' && sec) {
+    const b = state.batches.get(sec.dataset.bid);
+    if (b) { ui.collapsed[b.id] = !isCollapsed(b); saveUi(); schedule(); }
+  }
+});
+hero.addEventListener('click', e => {
+  const b = e.target.closest('[data-goto]'); if (!b) return;
+  const id = b.dataset.goto;
+  if (ui.collapsed[id]) { ui.collapsed[id] = false; saveUi(); render(); }
+  const el = document.getElementById('batch-' + id);
+  if (el) { const y = el.getBoundingClientRect().top + scrollY - bar.offsetHeight - 8; scrollTo({ top: y, behavior: 'smooth' }); }
+});
+bar.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.status) { ui.status = b.dataset.status; saveUi(); schedule(); }
+  else if (b.id === 'btn-fold-all') {
+    const all = [...state.batches.values()], fold = !all.every(isCollapsed);
+    all.forEach(x => { ui.collapsed[x.id] = fold; }); saveUi(); schedule();
+  }
+});
+$('#stairs-box').addEventListener('toggle', e => { ui.stairs = e.target.open; saveUi(); });
+$('#btn-add-batch').addEventListener('click', () => openBatchSheet(null));
+const sentinel = document.createElement('div'); sentinel.style.cssText = 'height:0;margin-top:-14px'; bar.before(sentinel);
+try { new IntersectionObserver(([en]) => bar.classList.toggle('stuck', !en.isIntersecting)).observe(sentinel); } catch (e) {}
+
+/* ---------- bottom sheet ---------- */
+let sheet = null;
+function openSheet(html, onSave, onOpen) {
+  closeSheet(false);
+  const scrim = document.createElement('div');
+  scrim.className = 'scrim';
+  scrim.innerHTML = `<div class="sheet" role="dialog" aria-modal="true">${html}</div>`;
+  document.body.append(scrim);
+  document.documentElement.style.overflow = 'hidden';
+  const prevFocus = document.activeElement;
+  sheet = { scrim, onSave, prevFocus };
+  requestAnimationFrame(() => scrim.classList.add('on'));
+  setTimeout(() => scrim.classList.add('on'), 30);
+  scrim.addEventListener('click', e => { if (e.target === scrim) closeSheet(true); });
+  scrim.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { e.preventDefault(); closeSheet(true); }
+    if (e.key === 'Enter' && e.target.matches('input.in')) { e.preventDefault(); closeSheet(true); }
+  });
+  scrim.querySelector('[data-close]').addEventListener('click', () => closeSheet(true));
+  if (onOpen) onOpen(scrim.querySelector('.sheet'));
+}
+function closeSheet(save) {
+  if (!sheet) return;
+  const s = sheet; sheet = null;
+  if (save && s.onSave) s.onSave(s.scrim.querySelector('.sheet'));
+  s.scrim.remove();
+  document.documentElement.style.overflow = '';
+  if (s.prevFocus && document.contains(s.prevFocus)) { try { s.prevFocus.focus({ preventScroll: true }); } catch (e) {} }
+  schedule();
+}
+
+function openItemSheet(id, bidForNew) {
+  const isNew = !id;
+  const it = isNew ? { batch: bidForNew, name: '', cat: guessCat(bidForNew), lo: null, hi: null, paid: null, done: false, date: '', note: '', est: false } : state.items.get(id);
+  if (!it) return;
+  const b = state.batches.get(it.batch);
+  const skip = b && b.kind === 'skip';
+  const opts = moveTargets().map(t => `<option value="${esc(t.id)}"${t.id === it.batch ? ' selected' : ''}>${esc(batchLabel(t))}</option>`).join('')
+    + (state.batches.has(it.batch) ? '' : '<option value="" selected disabled>（選一個梯次）</option>');
+  const html = `
+    <div class="sh-head"><h2>${isNew ? '新增項目' : esc(it.name || '編輯項目')}</h2><button type="button" class="pill blue" data-close>完成</button></div>
+    <div class="fields">
+      <label class="fl"><span>項目</span><input class="in" id="f-name" value="${esc(it.name || '')}" placeholder="買了什麼" autocomplete="off"></label>
+      ${skip ? '' : `
+      <label class="fl"><span>實付<em>NT$</em></span><input class="in big" id="f-paid" inputmode="decimal" value="${isNum(it.paid) ? money(it.paid) : ''}" placeholder="還沒付"></label>
+      <button type="button" class="done-row" id="f-done" aria-pressed="${!!it.done}"><span class="c">${ICON_CHECK}</span>已完成</button>
+      <div class="two">
+        <label class="fl"><span>預算下限（萬）</span><input class="in numf" id="f-lo" inputmode="decimal" value="${budgetVal(it.lo)}" placeholder="—"></label>
+        <label class="fl"><span>預算上限（萬）</span><input class="in numf" id="f-hi" inputmode="decimal" value="${budgetVal(it.hi)}" placeholder="—"></label>
+      </div>
+      ${it.est ? '<p class="hint est">「估」：原本合併估算、拆開分配的金額，改了就不算估。</p>' : ''}
+      <label class="fl"><span>日期</span><input class="in" type="date" id="f-date" value="${esc(it.date || '')}"></label>`}
+      <div class="fl"><span>類別</span><div class="cats" id="f-cat">${CATS.map(c => `<button type="button" data-cat="${c}" aria-pressed="${c === it.cat}"><i class="dot cat-${CAT_CLASS[c]}"></i>${c}</button>`).join('')}</div></div>
+      <label class="fl"><span>備註</span><input class="in" id="f-note" value="${esc(it.note || '')}" placeholder="店家、型號…" autocomplete="off"></label>
+      <label class="fl"><span>梯次</span><select class="in" id="f-batch">${opts}</select></label>
+      ${isNew ? '' : '<button type="button" class="danger" id="f-del">刪除這一項</button>'}
+    </div>`;
+  openSheet(html, el => saveItemSheet(el, id, it, isNew), el => {
+    el.querySelector('#f-cat').addEventListener('click', e => {
+      const btn = e.target.closest('[data-cat]'); if (!btn) return;
+      el.querySelectorAll('#f-cat button').forEach(x => x.setAttribute('aria-pressed', String(x === btn)));
+    });
+    const d = el.querySelector('#f-done');
+    if (d) d.addEventListener('click', () => {
+      const on = d.getAttribute('aria-pressed') !== 'true';
+      d.setAttribute('aria-pressed', String(on));
+      const dt = el.querySelector('#f-date');
+      if (on && dt && !dt.value) dt.value = today();
+    });
+    const paid = el.querySelector('#f-paid');
+    if (paid) {
+      paid.addEventListener('focus', () => { paid.value = paid.value.replace(/,/g, ''); });
+    }
+    const del = el.querySelector('#f-del');
+    if (del) del.addEventListener('click', () => { closeSheet(false); deleteItem(id); });
+    if (isNew) el.querySelector('#f-name').focus({ preventScroll: true });
+  });
+}
+function guessCat(bid) {
+  const counts = {}; itemsIn(bid).forEach(i => { counts[i.cat] = (counts[i.cat] || 0) + 1; });
+  return Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0] || '傢俱';
+}
+function saveItemSheet(el, id, it, isNew) {
+  const v = sel => el.querySelector(sel);
+  const patch = {};
+  const name = v('#f-name').value.trim();
+  if (isNew && !name) return;
+  patch.name = name;
+  const catBtn = el.querySelector('#f-cat [aria-pressed="true"]');
+  if (catBtn) patch.cat = catBtn.dataset.cat;
+  patch.note = v('#f-note').value.trim();
+  const bsel = v('#f-batch').value; if (bsel && bsel !== it.batch) {
+    patch.batch = bsel;
+    patch.order = itemsIn(bsel).reduce((m, x) => Math.max(m, x.order || 0), 0) + 10;
+  }
+  if (v('#f-done')) {
+    patch.done = v('#f-done').getAttribute('aria-pressed') === 'true';
+    patch.date = v('#f-date').value;
+    const paid = parsePaid(v('#f-paid').value);
+    if (paid === undefined) toast('實付不是數字，沒改到'); else patch.paid = paid;
+    let lo = parseBudget(v('#f-lo').value), hi = parseBudget(v('#f-hi').value);
+    if (lo === undefined || hi === undefined) { toast('預算不是數字，沒改到'); lo = it.lo ?? null; hi = it.hi ?? null; }
+    if (lo !== null && hi === null) hi = lo;
+    if (hi !== null && lo === null) lo = hi;
+    if (lo !== null && hi !== null && lo > hi) [lo, hi] = [hi, lo];
+    if ((lo ?? null) !== (it.lo ?? null) || (hi ?? null) !== (it.hi ?? null)) { patch.lo = lo; patch.hi = hi; patch.est = false; }
+  }
+  if (isNew) {
+    const bid = patch.batch || it.batch;
+    const data = { ...it, ...patch, batch: bid, order: patch.order ?? (itemsIn(bid).reduce((m, x) => Math.max(m, x.order || 0), 0) + 10), created: Date.now() };
+    if (ui.status === 'done' && !data.done) { ui.status = 'all'; saveUi(); }
+    setDoc('items', newId('i'), data);
+    return;
+  }
+  const cur = state.items.get(id); if (!cur) return;
+  const diff = {};
+  for (const k of Object.keys(patch)) if ((cur[k] ?? null) !== (patch[k] ?? null)) diff[k] = patch[k];
+  if (Object.keys(diff).length) updateDoc('items', id, diff);
+  if (diff.batch) toast(`移到 ${batchLabel(state.batches.get(diff.batch))}`);
+}
+function deleteItem(id) {
+  const it = state.items.get(id); if (!it) return;
+  const copy = strip(it);
+  removeDoc('items', id);
+  toast(`已刪除「${it.name || '未命名'}」`, { action: '復原', onAction: () => setDoc('items', id, copy) });
+}
+
+function openBatchSheet(bid) {
+  const isNew = !bid;
+  const b = isNew ? { title: '', when: '', kind: 'plan' } : state.batches.get(bid);
+  if (!b) return;
+  const count = isNew ? 0 : itemsIn(bid).length;
+  const html = `
+    <div class="sh-head"><h2>${isNew ? '新增梯次' : '編輯梯次'}</h2><button type="button" class="pill blue" data-close>完成</button></div>
+    <div class="fields">
+      <label class="fl"><span>名稱</span><input class="in" id="g-title" value="${esc(b.title || '')}" placeholder="這一梯叫什麼" autocomplete="off"></label>
+      <label class="fl"><span>時間</span><input class="in" id="g-when" value="${esc(b.when || '')}" placeholder="例如：2027 年春天" autocomplete="off"></label>
+      ${isNew ? '' : `<button type="button" class="danger" id="g-del"${count ? ' disabled' : ''}>${count ? `刪除梯次（先移走 ${count} 個項目）` : '刪除這個梯次'}</button>`}
+    </div>`;
+  openSheet(html, el => {
+    const title = el.querySelector('#g-title').value.trim(), when = el.querySelector('#g-when').value.trim();
+    if (isNew) {
+      if (!title) return;
+      const maxO = planBatches().reduce((m, x) => Math.max(m, x.order || 0), 0);
+      setDoc('batches', newId('b'), { order: maxO + 10, title, when, kind: 'plan', created: Date.now() });
+      return;
+    }
+    const cur = state.batches.get(bid); if (!cur) return;
+    const diff = {};
+    if ((cur.title || '') !== title) diff.title = title;
+    if ((cur.when || '') !== when) diff.when = when;
+    if (Object.keys(diff).length) updateDoc('batches', bid, diff);
+  }, el => {
+    const del = el.querySelector('#g-del');
+    if (del) del.addEventListener('click', () => {
+      if (itemsIn(bid).length) return;
+      closeSheet(false);
+      const copy = strip(state.batches.get(bid));
+      removeDoc('batches', bid);
+      toast(`已刪除梯次「${copy.title || '未命名'}」`, { action: '復原', onAction: () => setDoc('batches', bid, copy) });
+    });
+    if (isNew) el.querySelector('#g-title').focus({ preventScroll: true });
+  });
+}
+
+/* ---------- staircase tooltip ---------- */
+function showTip(col, x, y) {
+  const r = stairRows[+col.dataset.i]; if (!r) return;
+  tip.innerHTML = `<b>${no2(r.no)}　${esc(r.b.title || '未命名')}</b>
+    <div class="tr"><span>這梯</span><span>${rangeText(r.s.lo, r.s.hi)} 萬</span></div>
+    <div class="tr"><span>做完累計</span><span>${rangeText(r.cLo, r.cHi)} 萬</span></div>
+    <div class="tr"><span>累計已付</span><span>${money(r.cPaid)}</span></div>`;
+  tip.hidden = false;
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  let left = x + 12, top = y - h - 12;
+  if (left + w > innerWidth - 8) left = Math.max(8, x - w - 12);
+  if (top < 8) top = y + 16;
+  tip.style.left = left + 'px'; tip.style.top = top + 'px';
+}
+const hideTip = () => { tip.hidden = true; };
+stairs.addEventListener('pointermove', e => { const c = e.target.closest('.st-col'); if (c) showTip(c, e.clientX, e.clientY); else hideTip(); });
+stairs.addEventListener('pointerleave', hideTip);
+stairs.addEventListener('focusin', e => { const c = e.target.closest('.st-col'); if (c) { const rc = c.getBoundingClientRect(); showTip(c, rc.left + rc.width / 2, rc.top + 40); } });
+stairs.addEventListener('focusout', hideTip);
+addEventListener('scroll', hideTip, { passive: true });
+
+/* ---------- toast / export ---------- */
+function toast(msg, opts = {}) {
+  const el = document.createElement('div'); el.className = 'toast';
+  const span = document.createElement('span'); span.textContent = msg; el.append(span);
+  if (opts.action) {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = opts.action;
+    b.addEventListener('click', () => { opts.onAction(); el.remove(); });
+    el.append(b);
+  }
+  toasts.append(el);
+  while (toasts.children.length > 3) toasts.firstChild.remove();
+  setTimeout(() => el.remove(), opts.action ? 7000 : 2800);
+}
+function exportRows() {
+  const out = [['梯次', '時間', '項目', '類別', '預算下限(元)', '預算上限(元)', '實付(元)', '完成', '日期', '備註']];
+  for (const b of moveTargets()) for (const i of itemsIn(b.id))
+    out.push([batchLabel(b), b.when || '', i.name || '', i.cat || '', i.lo ?? '', i.hi ?? '', i.paid ?? '', i.done ? '是' : '', i.date || '', i.note || '']);
+  for (const i of orphanItems()) out.push(['（沒有梯次）', '', i.name || '', i.cat || '', i.lo ?? '', i.hi ?? '', i.paid ?? '', i.done ? '是' : '', i.date || '', i.note || '']);
+  return out;
+}
+const toCsv = rows => rows.map(r => r.map(c => { const s = String(c ?? ''); return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; }).join(',')).join('\r\n');
+const toTsv = rows => rows.map(r => r.map(c => String(c ?? '').replace(/[\t\r\n]+/g, ' ')).join('\t')).join('\n');
+function openCopyPanel(text) {
+  openSheet(`<div class="sh-head"><h2>複製到 Excel</h2><button type="button" class="pill blue" data-close>關閉</button></div>
+    <div class="fields"><p class="hint" style="margin:0">已全選，按複製後貼到 Excel 或 Google 試算表。</p><textarea class="copy-ta" readonly></textarea></div>`, null, el => {
+    const ta = el.querySelector('textarea'); ta.value = text; ta.focus(); ta.select();
+  });
+}
+$('#btn-copy').addEventListener('click', () => {
+  const text = toTsv(exportRows());
+  let p = null;
+  try { p = navigator.clipboard && navigator.clipboard.writeText(text); } catch (e) { p = null; }
+  if (!p) { openCopyPanel(text); return; }
+  p.then(() => toast('已複製，可以貼到 Excel'), () => openCopyPanel(text));
+});
+$('#btn-csv').addEventListener('click', async () => {
+  if (!downloads) {
+    const url = URL.createObjectURL(new Blob(['\ufeff' + toCsv(exportRows())], { type: 'text/csv;charset=utf-8' }));
+    const a = document.createElement('a'); a.href = url; a.download = `${state.meta.title || '帳本'}_${today()}.csv`;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+    return;
+  }
+  try {
+    const r = await downloads.save({ filename: `${state.meta.title || '帳本'}_${today()}.csv`, data: '﻿' + toCsv(exportRows()) });
+    if (r && r.status === 'saved') toast('已存成 CSV');
+  } catch (e) {
+    const c = e && e.code;
+    if (c === 'declined') return;
+    toast(c === 'rate_limited' ? '存檔視窗還開著' : '這裡不能存檔，改用「複製到 Excel」');
+  }
+});
+
+/* ---------- boot ---------- */
+function startDb(store) {
+  db = store;
+  let gotB = false, gotI = false;
+  const settle = () => { if (gotB && gotI && state.mode === 'loading') state.mode = 'db'; schedule(); };
+  const onErr = () => { state.mode = 'error'; schedule(); };
+  const toMap = snap => new Map(snap.docs.filter(d => d.exists).map(d => [d.id, { ...d.data(), id: d.id }]));
+  db.collection('batches').limit(1000).onSnapshot(snap => { state.batches = toMap(snap); gotB = true; settle(); }, onErr);
+  db.collection('items').limit(1000).onSnapshot(snap => { state.items = toMap(snap); gotI = true; settle(); }, onErr);
+}
+$('#gate-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const input = $('#gate-key'), btn = $('#gate-go');
+  const token = input.value.trim();
+  if (!token) { $('#gate-err').textContent = '先貼上鑰匙。'; return; }
+  btn.disabled = true; btn.textContent = '打開中…'; $('#gate-err').textContent = '';
+  try { await unlock(token); input.value = ''; watchGh(); }
+  catch (err) {
+    ghToken = '';
+    gateMsg = err.code === 'auth' ? '鑰匙不對或已過期。' : err.code === 'notfound' ? '這把鑰匙打不開這本帳：權限沒有勾到資料 repo。' : '連不上 GitHub，確認網路再試一次。';
+    $('#gate-err').textContent = gateMsg;
+  } finally { btn.disabled = false; btn.textContent = '打開'; }
+});
+let lockArmed = 0;
+$('#btn-lock').addEventListener('click', e => {
+  const btn = e.currentTarget;
+  if (!lockArmed) {
+    btn.textContent = outbox.length ? `還有 ${outbox.length} 筆沒傳，確定登出？` : '再按一次確定登出';
+    lockArmed = setTimeout(() => { lockArmed = 0; btn.textContent = '這支手機登出'; }, 4000);
+    return;
+  }
+  clearTimeout(lockArmed); lockArmed = 0;
+  [TOKEN_KEY, OUTBOX_KEY, CACHE_KEY].forEach(k => lsSet(k, null));
+  ghToken = ''; ghBase = null; ghSha = ''; outbox = []; outSeq = 0; syncErr = ''; gateMsg = '';
+  state.batches = new Map(); state.items = new Map(); state.meta = {};
+  state.mode = 'gh-setup'; btn.textContent = '這支手機登出';
+  render();
+});
+async function init() {
+  render();
+  if (!window.claude || typeof window.claude.use !== 'function') {
+    $('#btn-csv').hidden = false;
+    await startGh();
+    if (state.mode === 'gh' || state.mode === 'error') watchGh();
+    return;
+  }
+  window.claude.use('downloads').then(d => { if (d) { downloads = d; $('#btn-csv').hidden = false; } }).catch(() => {});
+  let store = null;
+  try { store = await window.claude.use('db'); } catch (e) { store = null; }
+  if (!store) { state.mode = 'nodb'; schedule(); return; }
+  startDb(store);
+}
+init();
+})();
+</script>
+
+</body>
+</html>
